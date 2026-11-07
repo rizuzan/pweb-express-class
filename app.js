@@ -2,14 +2,34 @@ const express = require('express');
 const productRoutes = require('./routes/productRoutes');
 
 const app = express();
-const PORT = 3000;
 
-// PENTING: Middleware agar Express bisa membaca body bertipe JSON pada request POST
 app.use(express.json());
-
-// Mendaftarkan route dengan awalan URL '/products'
 app.use('/products', productRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server berjalan di http://localhost:${PORT}`);
+app.use((err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  const status = Number.isInteger(err.status) && err.status >= 400 && err.status < 500
+    ? err.status
+    : 500;
+
+  if (status === 500) {
+    console.error(err);
+  }
+
+  res.status(status).json({
+    message: status < 500 ? 'Request tidak valid' : 'Terjadi kesalahan pada server',
+  });
 });
+
+if (require.main === module) {
+  const port = process.env.PORT || 3000;
+
+  app.listen(port, () => {
+    console.log(`Server berjalan di http://localhost:${port}`);
+  });
+}
+
+module.exports = app;
