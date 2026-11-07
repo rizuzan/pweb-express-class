@@ -1,56 +1,97 @@
-// Data awal disimpan di array dalam memori (tanpa database)
-const products = [
-  { id: 1, name: 'Buku', price: 15000 },
-  { id: 2, name: 'Pulpen', price: 5000 },
-];
+const db = require('../database');
 
-// 1. Mengambil seluruh produk (GET /products)
+const isValidId = (id) => Number.isSafeInteger(id) && id > 0;
+
+const validateProduct = (name, price) => {
+  if (typeof name !== 'string' || name.trim() === '') {
+    return 'Nama produk wajib diisi dengan teks';
+  }
+
+  if (typeof price !== 'number' || !Number.isFinite(price) || price < 0) {
+    return 'Harga produk harus berupa angka nol atau lebih';
+  }
+
+  return null;
+};
+
 const getAllProducts = (req, res) => {
+  const products = db.prepare('SELECT id, name, price FROM products ORDER BY id').all();
   res.status(200).json(products);
 };
 
-// 2. Mengambil 1 produk berdasarkan ID (GET /products/:id)
 const getProductById = (req, res) => {
-  // req.params.id selalu bertipe string, jadi harus diubah ke angka (integer)
-  const id = parseInt(req.params.id);
-  
-  // Mencari produk di dalam array yang ID-nya cocok
-  const product = products.find((item) => item.id === id);
+  const id = Number(req.params.id);
 
-  // Jika produk tidak ditemukan, kembalikan status 404
+  if (!isValidId(id)) {
+    return res.status(400).json({ message: 'ID produk tidak valid' });
+  }
+
+  const product = db.prepare('SELECT id, name, price FROM products WHERE id = ?').get(id);
+
   if (!product) {
     return res.status(404).json({ message: 'Produk tidak ditemukan' });
   }
 
-  // Jika ditemukan, kembalikan status 200 beserta objek produknya
   res.status(200).json(product);
 };
 
-// 3. Menambahkan produk baru (POST /products)
 const createProduct = (req, res) => {
-  // Mengambil data name dan price dari body request (JSON)
-  const { name, price } = req.body;
+  const { name, price } = req.body ?? {};
+  const validationError = validateProduct(name, price);
 
-  // Membuat ID baru secara otomatis (ID terakhir + 1, atau 1 jika array kosong)
-  const newId = products.length > 0 ? products[products.length - 1].id + 1 : 1;
+  if (validationError) {
+    return res.status(400).json({ message: validationError });
+  }
 
-  // Menyusun objek produk baru
-  const newProduct = {
-    id: newId,
-    name: name,
-    price: price,
-  };
+  const result = db.prepare('INSERT INTO products (name, price) VALUES (?, ?)').run(name.trim(), price);
+  const product = db.prepare('SELECT id, name, price FROM products WHERE id = ?').get(result.lastInsertRowid);
 
-  // Menyimpan produk baru ke dalam array products
-  products.push(newProduct);
-
-  // Mengembalikan status 201 (Created) beserta data produk yang baru dibuat
-  res.status(201).json(newProduct);
+  res.status(201).json(product);
 };
 
-// Mengekspor fungsi agar bisa digunakan di file route
+const updateProduct = (req, res) => {
+  const { id, name, price } = req.body ?? {};
+
+  if (!isValidId(id)) {
+    return res.status(400).json({ message: 'ID produk tidak valid' });
+  }
+
+  const validationError = validateProduct(name, price);
+
+  if (validationError) {
+    return res.status(400).json({ message: validationError });
+  }
+
+  const result = db.prepare('UPDATE products SET name = ?, price = ? WHERE id = ?').run(name.trim(), price, id);
+
+  if (result.changes === 0) {
+    return res.status(404).json({ message: 'Produk tidak ditemukan' });
+  }
+
+  const product = db.prepare('SELECT id, name, price FROM products WHERE id = ?').get(id);
+  res.status(200).json(product);
+};
+
+const deleteProduct = (req, res) => {
+  const id = Number(req.params.id);
+
+  if (!isValidId(id)) {
+    return res.status(400).json({ message: 'ID produk tidak valid' });
+  }
+
+  const result = db.prepare('DELETE FROM products WHERE id = ?').run(id);
+
+  if (result.changes === 0) {
+    return res.status(404).json({ message: 'Produk tidak ditemukan' });
+  }
+
+  res.status(200).json({ message: 'Produk berhasil dihapus' });
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
   createProduct,
+  updateProduct,
+  deleteProduct,
 };
