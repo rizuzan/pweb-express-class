@@ -20,8 +20,11 @@ db.exec(`
 if (!productsTableExists) {
   const insertProduct = db.prepare('INSERT INTO products (name, price) VALUES (?, ?)');
   const seedProducts = db.transaction(() => {
-    insertProduct.run('Buku', 15000);
     insertProduct.run('Pulpen', 5000);
+    insertProduct.run('Buku Tulis', 12000);
+    insertProduct.run('Spidol', 8000);
+    insertProduct.run('Penggaris', 6000);
+    insertProduct.run('Penghapus', 3000);
   });
 
   seedProducts();
