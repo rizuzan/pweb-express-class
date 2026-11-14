@@ -32,7 +32,10 @@ tugas-api-produk/
    ```
    *Biarkan terminal ini tetap terbuka. Server akan aktif di `http://localhost:3000`.*
 
-Data disimpan secara lokal di file `data.db`. File dan tabel database dibuat otomatis saat server pertama kali dijalankan. Dua produk contoh (`Buku` dan `Pulpen`) ditambahkan hanya ketika tabel masih kosong.
+3. **Membuka antarmuka**
+   Buka `http://localhost:3000` di browser untuk mengelola produk. Halaman ini menyediakan pencarian serta fitur tambah, edit, dan hapus yang menggunakan API pada proyek ini.
+
+Data disimpan secara lokal di file `data.db`. File dan tabel database dibuat otomatis saat server pertama kali dijalankan. Lima produk contoh ditambahkan hanya ketika tabel produk baru dibuat.
 
 ---
 
