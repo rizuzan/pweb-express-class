@@ -27,13 +27,24 @@ after(async () => {
   rmSync(testDirectory, { recursive: true, force: true });
 });
 
+test('GET / serves the product management page', async () => {
+  const response = await fetch(baseUrl);
+
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get('content-type'), /text\/html/);
+  assert.match(await response.text(), /Manajemen Produk/);
+});
+
 test('GET /products returns persisted starter products', async () => {
   const response = await fetch(`${baseUrl}/products`);
 
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), [
-    { id: 1, name: 'Buku', price: 15000 },
-    { id: 2, name: 'Pulpen', price: 5000 },
+    { id: 1, name: 'Pulpen', price: 5000 },
+    { id: 2, name: 'Buku Tulis', price: 12000 },
+    { id: 3, name: 'Spidol', price: 8000 },
+    { id: 4, name: 'Penggaris', price: 6000 },
+    { id: 5, name: 'Penghapus', price: 3000 },
   ]);
 });
 
@@ -46,7 +57,7 @@ test('POST /products creates a product and GET /products/:id retrieves it', asyn
 
   assert.equal(response.status, 201);
   const createdProduct = await response.json();
-  assert.deepEqual(createdProduct, { id: 3, name: 'Penggaris', price: 7000 });
+  assert.deepEqual(createdProduct, { id: 6, name: 'Penggaris', price: 7000 });
 
   const getResponse = await fetch(`${baseUrl}/products/${createdProduct.id}`);
   assert.equal(getResponse.status, 200);
@@ -83,18 +94,18 @@ test('PUT /products updates an existing product by body id', async () => {
   const response = await fetch(`${baseUrl}/products`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id: 3, name: 'Penggaris Besi', price: 9000 }),
+    body: JSON.stringify({ id: 6, name: 'Penggaris Besi', price: 9000 }),
   });
 
   assert.equal(response.status, 200);
-  assert.deepEqual(await response.json(), { id: 3, name: 'Penggaris Besi', price: 9000 });
+  assert.deepEqual(await response.json(), { id: 6, name: 'Penggaris Besi', price: 9000 });
 });
 
 test('DELETE /products/:id removes an existing product', async () => {
-  const response = await fetch(`${baseUrl}/products/3`, { method: 'DELETE' });
+  const response = await fetch(`${baseUrl}/products/6`, { method: 'DELETE' });
 
   assert.equal(response.status, 200);
 
-  const getResponse = await fetch(`${baseUrl}/products/3`);
+  const getResponse = await fetch(`${baseUrl}/products/6`);
   assert.equal(getResponse.status, 404);
 });

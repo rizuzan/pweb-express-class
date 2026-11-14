@@ -1,10 +1,12 @@
 const express = require('express');
+const path = require('node:path');
 const productRoutes = require('./routes/productRoutes');
 
 const app = express();
 
 app.use(express.json());
 app.use('/products', productRoutes);
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((err, req, res, next) => {
   if (res.headersSent) {
