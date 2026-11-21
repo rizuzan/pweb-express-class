@@ -1,4 +1,4 @@
-# Tugas API Daftar Produk (ExpressJS)
+# Tugas API Daftar Produk (ExpressJS, React, dan Tailwind CSS)
 
 ## 1. Struktur Folder Proyek
 Pastikan struktur folder dan file kamu sudah sesuai seperti di bawah ini:
@@ -8,10 +8,17 @@ tugas-api-produk/
 │   └── productController.js
 ├── routes/
 │   └── productRoutes.js
+├── src/
+│   ├── App.jsx
+│   ├── index.css
+│   └── main.jsx
+├── index.html
+├── vite.config.mjs
 ├── database.js
 ├── app.js
 ├── package.json
 ├── package-lock.json
+├── dist/ (hasil build, dibuat otomatis dan tidak di-commit)
 └── data.db (dibuat otomatis dan tidak di-commit)
 ```
 
@@ -25,15 +32,20 @@ tugas-api-produk/
    npm install
    ```
 
-2. **Menjalankan Server**
-   Jalankan server dengan perintah:
+2. **Menjalankan aplikasi saat pengembangan**
+   Jalankan API Express dan Vite secara bersamaan:
+   ```bash
+   npm run dev
+   ```
+   Buka URL yang ditampilkan Vite (biasanya `http://localhost:5173`). API tetap tersedia di `http://localhost:3000`.
+
+3. **Build dan menjalankan aplikasi**
    ```bash
    npm start
    ```
-   *Biarkan terminal ini tetap terbuka. Server akan aktif di `http://localhost:3000`.*
+   Perintah tersebut membuat build React lalu menjalankan aplikasi di `http://localhost:3000`.
 
-3. **Membuka antarmuka**
-   Buka `http://localhost:3000` di browser untuk mengelola produk. Halaman ini menyediakan pencarian serta fitur tambah, edit, dan hapus yang menggunakan API pada proyek ini.
+Antarmuka menggunakan React Router untuk halaman daftar (`/`), detail (`/products/:id`), dan halaman 404. Produk dapat ditambah, dilihat, diedit, dan dihapus seperti sebelumnya. Tombol Grid/List mengubah susunan produk dan menyimpan pilihan di browser.
 
 Data disimpan secara lokal di file `data.db`. File dan tabel database dibuat otomatis saat server pertama kali dijalankan. Lima produk contoh ditambahkan hanya ketika tabel produk baru dibuat.
 
