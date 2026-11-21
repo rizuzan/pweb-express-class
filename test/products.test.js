@@ -35,6 +35,16 @@ test('GET / serves the product management page', async () => {
   assert.match(await response.text(), /Manajemen Produk/);
 });
 
+test('GET /products/:id serves the client route for browser navigation', async () => {
+  const response = await fetch(`${baseUrl}/products/1`, {
+    headers: { Accept: 'text/html' },
+  });
+
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get('content-type'), /text\/html/);
+  assert.match(await response.text(), /Manajemen Produk/);
+});
+
 test('GET /products returns persisted starter products', async () => {
   const response = await fetch(`${baseUrl}/products`);
 

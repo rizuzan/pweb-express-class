@@ -1,117 +1,141 @@
-# Tugas API Daftar Produk (ExpressJS)
+# Tugas API Daftar Produk (ExpressJS, React, dan Tailwind CSS)
 
 ## 1. Struktur Folder Proyek
-Pastikan struktur folder dan file kamu sudah sesuai seperti di bawah ini:
+
 ```text
 tugas-api-produk/
 ├── controllers/
 │   └── productController.js
 ├── routes/
 │   └── productRoutes.js
+├── src/
+│   ├── App.jsx
+│   ├── index.css
+│   └── main.jsx
+├── index.html
+├── vite.config.mjs
 ├── database.js
 ├── app.js
 ├── package.json
 ├── package-lock.json
+├── dist/ (hasil build, dibuat otomatis dan tidak di-commit)
 └── data.db (dibuat otomatis dan tidak di-commit)
 ```
 
----
-
 ## 2. Petunjuk Menjalankan Proyek
 
-1. **Instalasi Dependensi**
-   Buka terminal di dalam folder proyek, lalu jalankan:
-   ```bash
-   npm install
-   ```
+### Instalasi dependensi
 
-2. **Menjalankan Server**
-   Jalankan server dengan perintah:
-   ```bash
-   npm start
-   ```
-   *Biarkan terminal ini tetap terbuka. Server akan aktif di `http://localhost:3000`.*
+Buka terminal di folder proyek, lalu jalankan:
 
-3. **Membuka antarmuka**
-   Buka `http://localhost:3000` di browser untuk mengelola produk. Halaman ini menyediakan pencarian serta fitur tambah, edit, dan hapus yang menggunakan API pada proyek ini.
+```bash
+npm install
+```
+
+### Menjalankan aplikasi saat pengembangan
+
+Jalankan API Express dan Vite secara bersamaan:
+
+```bash
+npm run dev
+```
+
+Buka URL yang ditampilkan Vite, biasanya `http://localhost:5173`. API tersedia di `http://localhost:3000`.
+
+### Build dan menjalankan aplikasi
+
+```bash
+npm start
+```
+
+Perintah tersebut membuat build React lalu menjalankan aplikasi di `http://localhost:3000`.
+
+Antarmuka menggunakan React Router untuk halaman daftar (`/`), detail (`/products/:id`), dan halaman 404. Produk dapat ditambah, dilihat, diedit, dan dihapus. Tombol Grid/List mengubah susunan produk dan menyimpan pilihan di browser.
 
 Data disimpan secara lokal di file `data.db`. File dan tabel database dibuat otomatis saat server pertama kali dijalankan. Lima produk contoh ditambahkan hanya ketika tabel produk baru dibuat.
-
----
 
 ## 3. Daftar Endpoint API
 
 | Metode | Endpoint | Deskripsi | Status Sukses | Status Gagal |
 | :--- | :--- | :--- | :--- | :--- |
 | **GET** | `/products` | Mengambil seluruh daftar produk | `200 OK` (Array JSON) | - |
-| **GET** | `/products/:id` | Mengambil 1 produk berdasarkan ID | `200 OK` (Objek JSON) | `404 Not Found` (Pesan JSON) |
-| **POST** | `/products` | Menambahkan produk baru (`name` & `price`) | `201 Created` (Objek JSON baru) | - |
+| **GET** | `/products/:id` | Mengambil satu produk berdasarkan ID | `200 OK` (Objek JSON) | `400 Bad Request` / `404 Not Found` |
+| **POST** | `/products` | Menambahkan produk baru (`name` dan `price`) | `201 Created` (Objek JSON baru) | `400 Bad Request` |
 | **PUT** | `/products` | Memperbarui produk berdasarkan `id` pada body | `200 OK` (Objek JSON yang diperbarui) | `400 Bad Request` / `404 Not Found` |
 | **DELETE** | `/products/:id` | Menghapus produk berdasarkan ID | `200 OK` (Pesan JSON) | `400 Bad Request` / `404 Not Found` |
 
-`name` harus berupa teks yang tidak kosong, dan `price` harus berupa angka nol atau lebih. Body untuk tambah produk:
+`name` harus berupa teks yang tidak kosong, dan `price` harus berupa angka nol atau lebih.
+
+Body untuk menambah produk:
+
 ```json
 { "name": "Penggaris", "price": 7000 }
 ```
 
-Body untuk memperbarui produk memerlukan `id`:
+Body untuk memperbarui produk:
+
 ```json
 { "id": 1, "name": "Buku Tulis", "price": 18000 }
 ```
 
----
+## 4. Panduan Pengujian
 
-## 4. Panduan Pengujian (Untuk Bukti Screenshot)
+### Uji 1: Mengambil seluruh produk (`GET /products`)
 
-### Uji 1: Mengambil Seluruh Produk (`GET /products`)
-* **Target Hasil:** Status `200 OK` dan array seluruh produk.
-* **Perintah Terminal:**
-  ```bash
-  curl -i http://localhost:3000/products
-  ```
+Target: status `200 OK` dan array seluruh produk.
 
-### Uji 2: Mengambil Produk Berdasarkan ID yang Ada (`GET /products/1`)
-* **Target Hasil:** Status `200 OK` dan objek produk Buku.
-* **Perintah Terminal:**
-  ```bash
-  curl -i http://localhost:3000/products/1
-  ```
+```bash
+curl -i http://localhost:3000/products
+```
 
-### Uji 3: Mengambil Produk dengan ID Tidak Ditemukan (`GET /products/999`)
-* **Target Hasil:** Status `404 Not Found` dan pesan JSON produk tidak ditemukan.
-* **Perintah Terminal:**
-  ```bash
-  curl -i http://localhost:3000/products/999
-  ```
+### Uji 2: Mengambil produk berdasarkan ID yang ada (`GET /products/1`)
 
-### Uji 4: Menambahkan Produk Baru (`POST /products`)
-* **Target Hasil:** Status `201 Created` dan objek produk baru dengan ID otomatis.
-* **Perintah Terminal (Mac / Linux / Git Bash):**
-  ```bash
-  curl -i -X POST http://localhost:3000/products \
-    -H "Content-Type: application/json" \
-    -d '{"name": "Penggaris", "price": 7000}'
-  ```
+Target: status `200 OK` dan objek produk dengan ID 1.
 
-### Uji 5: Memperbarui Produk (`PUT /products`)
+```bash
+curl -i http://localhost:3000/products/1
+```
+
+### Uji 3: Mengambil produk dengan ID yang tidak ditemukan (`GET /products/999`)
+
+Target: status `404 Not Found` dan pesan JSON bahwa produk tidak ditemukan.
+
+```bash
+curl -i http://localhost:3000/products/999
+```
+
+### Uji 4: Menambahkan produk baru (`POST /products`)
+
+Target: status `201 Created` dan objek produk baru dengan ID otomatis.
+
+```bash
+curl -i -X POST http://localhost:3000/products \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Penggaris", "price": 7000}'
+```
+
+### Uji 5: Memperbarui produk (`PUT /products`)
+
 ```bash
 curl -i -X PUT http://localhost:3000/products \
   -H "Content-Type: application/json" \
   -d '{"id": 1, "name": "Buku Tulis", "price": 18000}'
 ```
 
-### Uji 6: Menghapus Produk (`DELETE /products/:id`)
+### Uji 6: Menghapus produk (`DELETE /products/:id`)
+
 ```bash
 curl -i -X DELETE http://localhost:3000/products/1
 ```
 
 ### Menjalankan tes
+
 ```bash
 npm test
 ```
-* **Perintah Terminal (Satu Baris - Aman untuk Command Prompt / PowerShell Windows):**
-  ```bash
-  curl -i -X POST http://localhost:3000/products -H "Content-Type: application/json" -d "{\"name\": \"Penggaris\", \"price\": 7000}"
-  ```
 
----
+Perintah POST satu baris untuk Command Prompt atau PowerShell Windows:
+
+```bash
+curl -i -X POST http://localhost:3000/products -H "Content-Type: application/json" -d "{\"name\": \"Penggaris\", \"price\": 7000}"
+```
