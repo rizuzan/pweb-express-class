@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#153d78">
+    <title>Manajemen Produk</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Manajemen Produk, halaman utama">
+        <span class="brand-mark" aria-hidden="true">MP</span>
+        <span class="brand-name">Manajemen Produk</span>
+      </a>
+      <span class="institution">Institut Teknologi Sepuluh Nopember</span>
+    </header>
+
+    <main class="page-shell">
+      <section class="page-heading" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">Inventaris sederhana</p>
+          <h1 id="page-title">Manajemen Produk</h1>
+          <p class="page-description">Kelola daftar produk dan harga dalam satu tempat.</p>
+        </div>
+        <button class="button button-primary add-button" id="add-product" type="button">
+          <span aria-hidden="true">+</span>
+          Tambah Produk
+        </button>
+      </section>
+
+      <section class="product-section" aria-label="Daftar produk">
+        <div class="list-toolbar">
+          <label class="search-field">
+            <span class="search-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Cari nama produk</span>
+            <input id="search" type="search" placeholder="Cari nama produk..." autocomplete="off">
+          </label>
+          <p class="product-count" id="product-count" aria-live="polite"></p>
+        </div>
+
+        <p class="notice" id="notice" role="status" hidden></p>
+        <div class="product-grid" id="product-list" aria-live="polite"></div>
+        <div class="empty-state" id="empty-state" hidden>
+          <span class="empty-icon" aria-hidden="true">□</span>
+          <h2 id="empty-title">Belum ada produk</h2>
+          <p id="empty-description">Tambahkan produk pertama untuk mulai mengelola inventaris.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span class="footer-brand">ITS <span>Institut Teknologi Sepuluh Nopember</span></span>
+      <span class="footer-note">Tugas 3 · Aplikasi Manajemen Produk</span>
+    </footer>
+
+    <dialog class="product-dialog" id="product-dialog" aria-labelledby="dialog-title">
+      <form class="dialog-card" id="product-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow" id="dialog-eyebrow">Produk baru</p>
+            <h2 id="dialog-title">Tambah Produk</h2>
+          </div>
+          <button class="icon-button" id="close-dialog" type="button" aria-label="Tutup dialog">×</button>
+        </div>
+        <p class="dialog-description" id="dialog-description">Masukkan informasi produk baru.</p>
+
+        <label class="form-field" for="product-name">
+          <span>Nama Produk</span>
+          <input id="product-name" name="name" type="text" placeholder="Contoh: Pulpen" maxlength="100" required>
+        </label>
+
+        <label class="form-field" for="product-price">
+          <span>Harga (Rp)</span>
+          <input id="product-price" name="price" type="number" placeholder="Contoh: 5000" min="0" step="1" required>
+          <small>Harga harus lebih dari atau sama dengan 0.</small>
+        </label>
+
+        <p class="form-error" id="form-error" role="alert" hidden></p>
+        <div class="dialog-actions">
+          <button class="button button-outline" id="cancel-dialog" type="button">Batal</button>
+          <button class="button button-primary" id="save-product" type="submit">Simpan Produk</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="product-dialog" id="delete-dialog" aria-labelledby="delete-title">
+      <div class="dialog-card">
+        <div class="dialog-heading">
+          <div class="delete-symbol" aria-hidden="true">!</div>
+          <button class="icon-button" id="close-delete-dialog" type="button" aria-label="Tutup dialog">×</button>
+        </div>
+        <h2 id="delete-title">Hapus Produk?</h2>
+        <p class="dialog-description">Produk yang dihapus tidak dapat dikembalikan.</p>
+        <div class="product-preview" id="delete-preview"></div>
+        <p class="form-error" id="delete-error" role="alert" hidden></p>
+        <div class="dialog-actions">
+          <button class="button button-outline" id="cancel-delete" type="button">Batal</button>
+          <button class="button button-danger" id="confirm-delete" type="button">Hapus Produk</button>
+        </div>
+      </div>
+    </dialog>
+  </body>
+</html>
